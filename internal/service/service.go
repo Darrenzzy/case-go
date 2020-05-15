@@ -79,6 +79,9 @@ func (s *Service) Get(ctx context.Context, req *pb.Req) (reply *pb.Resp, err err
 	reply = &pb.Resp{
 		Content: "Get" + req.Name,
 	}
+
+	//s.dao.Article(c,req.XXX_sizecache)
+
 	fmt.Printf("Get %s", req.Name)
 	return
 }

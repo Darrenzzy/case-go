@@ -1,9 +1,11 @@
 package dao
 
 import (
+	"context"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"github.com/go-kratos/kratos/pkg/conf/paladin"
+	"order/internal/model"
 )
 
 // MysqlCfg mysql config
@@ -53,4 +55,10 @@ func NewDbOrm() (gdb *gorm.DB, cf func(), err error) {
 	return
 }
 
+func (d *dao) RawArticle(ctx context.Context, id int64) (art *model.Article, err error) {
+	// get data from db
+	err = d.db.Table("articles").Where("id=?", id).First(&art).Error
 
+	fmt.Printf("%+v,%+v ***********", art, err)
+	return
+}

@@ -27,11 +27,10 @@ var _ binding.StructValidator
 
 var PathDemoPing = "/demo.service.v1.Demo/Ping"
 var PathDemoSayHello = "/demo.service.v1.Demo/SayHello"
-var PathDemoSayHelloURL = "/order/say_hello"
 var PathDemoCreate = "/demo.service.v1.Demo/Create"
 var PathDemoDelete = "/demo.service.v1.Demo/Delete"
 var PathDemoTestQ = "/demo.service.v1.Demo/TestQ"
-var PathDemoGet = "/order/get"
+var PathDemoGetOrder = "/demo.service.v1.Demo/GetOrder"
 
 // DemoBMServer is the server API for Demo service.
 type DemoBMServer interface {
@@ -39,15 +38,18 @@ type DemoBMServer interface {
 
 	SayHello(ctx context.Context, req *HelloReq) (resp *google_protobuf1.Empty, err error)
 
-	SayHelloURL(ctx context.Context, req *HelloReq) (resp *HelloResp, err error)
-
+	//    rpc SayHelloURL (HelloReq) returns (HelloResp) {
+	//        option (google.api.http) = {
+	//      get: "/order/say_hello"
+	//    };
+	//    };
 	Create(ctx context.Context, req *Req) (resp *Resp, err error)
 
 	Delete(ctx context.Context, req *Req) (resp *Resp, err error)
 
 	TestQ(ctx context.Context, req *Req) (resp *Resp, err error)
 
-	Get(ctx context.Context, req *Req) (resp *Resp, err error)
+	GetOrder(ctx context.Context, req *OrderReq) (resp *OrderResp, err error)
 }
 
 var DemoSvc DemoBMServer
@@ -67,15 +69,6 @@ func demoSayHello(c *bm.Context) {
 		return
 	}
 	resp, err := DemoSvc.SayHello(c, p)
-	c.JSON(resp, err)
-}
-
-func demoSayHelloURL(c *bm.Context) {
-	p := new(HelloReq)
-	if err := c.BindWith(p, binding.Default(c.Request.Method, c.Request.Header.Get("Content-Type"))); err != nil {
-		return
-	}
-	resp, err := DemoSvc.SayHelloURL(c, p)
 	c.JSON(resp, err)
 }
 
@@ -106,12 +99,12 @@ func demoTestQ(c *bm.Context) {
 	c.JSON(resp, err)
 }
 
-func demoGet(c *bm.Context) {
-	p := new(Req)
+func demoGetOrder(c *bm.Context) {
+	p := new(OrderReq)
 	if err := c.BindWith(p, binding.Default(c.Request.Method, c.Request.Header.Get("Content-Type"))); err != nil {
 		return
 	}
-	resp, err := DemoSvc.Get(c, p)
+	resp, err := DemoSvc.GetOrder(c, p)
 	c.JSON(resp, err)
 }
 
@@ -120,9 +113,8 @@ func RegisterDemoBMServer(e *bm.Engine, server DemoBMServer) {
 	DemoSvc = server
 	e.GET("/demo.service.v1.Demo/Ping", demoPing)
 	e.GET("/demo.service.v1.Demo/SayHello", demoSayHello)
-	e.GET("/order/say_hello", demoSayHelloURL)
 	e.GET("/demo.service.v1.Demo/Create", demoCreate)
 	e.GET("/demo.service.v1.Demo/Delete", demoDelete)
 	e.GET("/demo.service.v1.Demo/TestQ", demoTestQ)
-	e.GET("/order/get", demoGet)
+	e.GET("/demo.service.v1.Demo/GetOrder", demoGetOrder)
 }

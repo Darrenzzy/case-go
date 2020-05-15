@@ -5,7 +5,7 @@ syntax = "proto3";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "google/protobuf/empty.proto";
-import "google/api/annotations.proto";
+//import "google/api/annotations.proto";
 
 // package 命名使用 {appid}.{version} 的方式, version 形如 v1, v2 ..
 package demo.service.v1;
@@ -18,19 +18,20 @@ option (gogoproto.goproto_getters_all) = false;
 service Demo {
     rpc Ping (.google.protobuf.Empty) returns (.google.protobuf.Empty);
     rpc SayHello (HelloReq) returns (.google.protobuf.Empty);
-    rpc SayHelloURL (HelloReq) returns (HelloResp) {
-        option (google.api.http) = {
-      get: "/order/say_hello"
-    };
-    };
+    //    rpc SayHelloURL (HelloReq) returns (HelloResp) {
+    //        option (google.api.http) = {
+    //      get: "/order/say_hello"
+    //    };
+    //    };
     rpc Create (Req) returns (Resp);
     rpc Delete (Req) returns (Resp);
     rpc TestQ (Req) returns (Resp);
-    rpc Get (Req) returns (Resp) {
-        option (google.api.http) = {
-      get : "/order/get"
-    };
-    };
+    rpc GetOrder (OrderReq) returns (OrderResp);
+    //    rpc Get (Req) returns (Resp) {
+    //        option (google.api.http) = {
+    //      get : "/order/get"
+    //    };
+    //    };
 }
 
 //service Order {
@@ -49,6 +50,14 @@ service Demo {
 //    };
 //    };
 //}
+
+message OrderReq {
+    int32 id = 1;
+
+}
+message OrderResp {
+
+}
 
 message HelloReq {
     string name = 1 [(gogoproto.moretags) = 'form:"name" validate:"required"'];
